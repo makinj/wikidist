@@ -1,6 +1,8 @@
 import requests
 import unidecode
 import urllib
+from flask import Flask
+app = Flask(__name__)
 
 def find_path(start_page, end_page):
   end_page = end_page.lower()
@@ -53,13 +55,23 @@ def find_path(start_page, end_page):
   else:
     return "no link found"
 
-start_page = raw_input("enter a page title to start with: ")
-end_page = raw_input("enter a page title to end with: ")
-path = find_path(start_page, end_page)
-if type(path) is str:
-  print path
-else:
-  for node in path:
-    print node,
-    if(node!=path[-1]):
-      print "->",
+@app.route("/path/<start>/<end>")
+def path(start, end):
+  start =unidecode.unidecode(start)
+  end = unidecode.unidecode(end)
+  print start
+  print end
+  path = find_path(start, end)
+  results = ''
+  if type(path) is str:
+    results = path
+  else:
+    for node in path:
+      results+= node
+      if(node!=path[-1]):
+        results += " -> "
+  return results
+
+if __name__ == "__main__":
+  app.debug = True
+  app.run()
