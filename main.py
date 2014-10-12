@@ -1,6 +1,7 @@
 import requests
 import unidecode
 import urllib
+from flask import render_template
 from flask import Flask
 app = Flask(__name__)
 
@@ -72,6 +73,9 @@ def path(start, end):
         results += " -> "
   return results
 
+@app.route("/")
+def index():
+  return render_template('index.html')
+
 if __name__ == "__main__":
-  app.debug = True
-  app.run()
+  app.run(host='0.0.0.0', port=8080)
