@@ -3,6 +3,7 @@ import unidecode
 import urllib
 from flask import render_template
 from flask import Flask
+from flask import jsonify
 app = Flask(__name__)
 
 def find_path(start_page, end_page):
@@ -12,6 +13,8 @@ def find_path(start_page, end_page):
 
   family_trie={start_page.lower():''}
   found=0
+  if start_page==end_page:
+    found=1
   while not found and (len(queue)>0 or len(benched_queue)>0):
     if len(queue)==0:
       queue = benched_queue
@@ -63,19 +66,11 @@ def path(start, end):
   print start
   print end
   path = find_path(start, end)
-  results = ''
-  if type(path) is str:
-    results = path
-  else:
-    for node in path:
-      results+= node
-      if(node!=path[-1]):
-        results += " -> "
-  return results
+  return jsonify(path=path)
 
 @app.route("/")
 def index():
   return render_template('index.html')
 
 if __name__ == "__main__":
-  app.run(host='0.0.0.0', port=8080)
+  app.run(host='0.0.0.0', port=8080, debug=True)
